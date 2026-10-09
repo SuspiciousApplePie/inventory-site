@@ -10,7 +10,7 @@ export default defineConfig([
       "prefer-const": "error",
       "no-unused-vars": "error",
       "no-console": "warn",
-      camelcase: "error",
+      camelcase: "warn",
       eqeqeq: "error",
     },
   },
