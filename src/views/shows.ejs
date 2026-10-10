@@ -24,8 +24,8 @@
                         <%= format(show.startDate, "dd MMMM yyyy") %>
                     </time> 
                     to 
-                    <time datetime="<%= show.endDate %>">
-                        <%= format(show.endDate, "dd MMMM yyyy") %>
+                    <time datetime="<%= show.endDate || ''%>">
+                        <%= show.endDate ? format(show.endDate, "dd MMMM yyyy") : "???" %>
                     </time>
                 </section>
             </div>
