@@ -4,8 +4,11 @@ import {
   getFormatList,
   addNewShow,
   getTitle,
+  getAllShows,
 } from "../db/queries.js";
 import { matchedData, body, validationResult } from "express-validator";
+import getSeason from "../utils.js";
+import { format } from "date-fns";
 
 const validateAddShow = [
   body("title")
@@ -85,6 +88,15 @@ async function getShowForm(req, res) {
   }
 }
 
+async function getShows(req, res) {
+  const shows = await getAllShows();
+  const transformedShows = transformShows(shows);
+  res.render("shows", {
+    shows: transformedShows,
+    getSeason: getSeason,
+    format: format,
+  });
+}
 const addShow = [
   validateAddShow,
   async (req, res) => {
@@ -94,7 +106,7 @@ const addShow = [
         const genres = await getGenreList();
         const studios = await getStudioList();
         const formats = await getFormatList();
-        console.log(errors);
+
         return res.status(400).render("add_show", {
           errors: errors.array(),
           genres: genres,
@@ -122,11 +134,40 @@ const addShow = [
         genre,
       });
       res.redirect("/");
-    } catch (e) {
-      console.log(e);
+    } catch {
       throw new Error("Something went wrong");
     }
   },
 ];
 
-export { addShow, getShowForm };
+function transformShows(shows) {
+  const showList = new Map();
+  for (const show of shows) {
+    if (!showList.has(show.anime_id)) {
+      showList.set(show.anime_id, {
+        animeId: show.anime_id,
+        title: show.title,
+        rating: show.rating,
+        startDate: show.start_date,
+        endDate: show.end_date,
+        format: show.format,
+        genres: new Set([show.genre]),
+        studios: new Set([show.studio]),
+      });
+    } else {
+      const showData = showList.get(show.anime_id);
+
+      if (!showData.genres.has(show.genre)) {
+        showData.genres.add(show.genre);
+      }
+
+      if (!showData.studios.has(show.studio)) {
+        showData.studios.add(show.studio);
+      }
+    }
+  }
+
+  return showList;
+}
+
+export { addShow, getShowForm, getShows };

@@ -67,4 +67,26 @@ async function addNewShow(show) {
   await addAnimeGenre(show.title, show.genre);
 }
 
-export { getGenreList, getStudioList, getFormatList, getTitle, addNewShow };
+async function getAllShows() {
+  const { rows } = await pool.query(
+    `
+    SELECT anime.anime_id, title, rating, start_date, end_date, format.format_name AS format, genre.genre_name AS genre, studio.studio_name AS studio FROM anime 
+    INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
+    INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
+    INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
+    INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
+    INNER JOIN format ON (format.format_id = anime.format_id) WHERE format.format_id = anime.format_id;
+    `,
+  );
+
+  return rows;
+}
+
+export {
+  getGenreList,
+  getStudioList,
+  getFormatList,
+  getTitle,
+  addNewShow,
+  getAllShows,
+};

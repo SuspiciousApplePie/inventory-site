@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/SuspiciousApplePie/inventory-site#readme",
   "devDependencies": {
+    "date-fns": "^4.4.0",
     "ejs": "^7.0.1",
     "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",

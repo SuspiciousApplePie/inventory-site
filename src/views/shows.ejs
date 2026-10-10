@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anime List</title>
+  </head>
+  <body>
+    <% shows.forEach((show) => { %>
+        <div>
+            <h1><%= show.title %></h1>
+            <h2>Rating: <%= show.rating %></h2>
+            <h3><%= show.format %></h3>
+            <h3><%= getSeason(show.startDate) %></h3>
+            <ul>
+                <% for (const genre of show.genres) { %>
+                    <li><%= genre %></li>
+                <% }; %>
+            </ul>
+            <div> 
+                <h4>Aired</h4>
+                <section>
+                    <time datetime="<%= show.startDate %>">
+                        <%= format(show.startDate, "dd MMMM yyyy") %>
+                    </time> 
+                    to 
+                    <time datetime="<%= show.endDate %>">
+                        <%= format(show.endDate, "dd MMMM yyyy") %>
+                    </time>
+                </section>
+            </div>
+    
+            <ul>
+                <% for (const studio of show.studios) { %>
+                    <li><%= studio %></li>
+                <% }; %>
+            </ul>
+        </div>
+    <% }); %>
+  </body>
+</html>

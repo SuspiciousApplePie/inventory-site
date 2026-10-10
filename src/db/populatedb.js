@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS anime_genre (
 INSERT INTO format (format_name) VALUES ('TV');
 INSERT INTO genre (genre_name) VALUES ('Action');
 INSERT INTO genre (genre_name) VALUES ('Comedy');
+INSERT INTO genre (genre_name) VALUES ('Romance');
+INSERT INTO genre (genre_name) VALUES ('Slice of Life');
 INSERT INTO studio (studio_name) VALUES ('Ufotable');
 INSERT INTO studio (studio_name) VALUES ('Toei');
 `;
