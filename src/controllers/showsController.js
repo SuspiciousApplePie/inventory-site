@@ -25,12 +25,15 @@ const validateShow = [
     .trim()
     .isNumeric()
     .withMessage("Please enter a valid number 1-10")
+    .bail()
     .isInt({ min: 1, max: 10 })
     .withMessage("Rating is only range 1-10"),
   body("start-date")
+    .notEmpty()
+    .withMessage("Start date is required.")
+    .bail()
     .isISO8601()
-    .isDate()
-    .withMessage("Start date is required."),
+    .withMessage("Start date is invalid."),
   body("end-date")
     .optional({ values: "falsy" })
     .isISO8601()
