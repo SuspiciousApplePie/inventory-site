@@ -2,15 +2,17 @@ import {
   getGenreList,
   getStudioList,
   getFormatList,
-  addNewShow,
   getTitle,
+  addNewShow,
   getAllShows,
+  getShowById,
+  updateShowById,
 } from "../db/queries.js";
 import { matchedData, body, validationResult } from "express-validator";
-import getSeason from "../utils.js";
-import { format } from "date-fns";
+import { getSeason, transformShows } from "../utils.js";
+import { format as formatDate } from "date-fns";
 
-const validateAddShow = [
+const validateShow = [
   body("title")
     .trim()
     .isLength({ min: 1, max: 255 })
@@ -89,16 +91,20 @@ async function getShowForm(req, res) {
 }
 
 async function getShows(req, res) {
-  const shows = await getAllShows();
-  const transformedShows = transformShows(shows);
-  res.render("shows", {
-    shows: transformedShows,
-    getSeason: getSeason,
-    format: format,
-  });
+  try {
+    const shows = await getAllShows();
+    const transformedShows = transformShows(shows);
+    res.render("shows", {
+      shows: transformedShows,
+      getSeason: getSeason,
+      formatDate: formatDate,
+    });
+  } catch {
+    throw new Error("Something went wrong.");
+  }
 }
 const addShow = [
-  validateAddShow,
+  validateShow,
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -140,34 +146,80 @@ const addShow = [
   },
 ];
 
-function transformShows(shows) {
-  const showList = new Map();
-  for (const show of shows) {
-    if (!showList.has(show.anime_id)) {
-      showList.set(show.anime_id, {
-        animeId: show.anime_id,
-        title: show.title,
-        rating: show.rating,
-        startDate: show.start_date,
-        endDate: show.end_date,
-        format: show.format,
-        genres: new Set([show.genre]),
-        studios: new Set([show.studio]),
-      });
-    } else {
-      const showData = showList.get(show.anime_id);
+async function getUpdateForm(req, res) {
+  try {
+    const animeId = +req.params.animeId;
 
-      if (!showData.genres.has(show.genre)) {
-        showData.genres.add(show.genre);
-      }
+    const showRaw = await getShowById(animeId);
+    const formats = await getFormatList();
+    const genres = await getGenreList();
+    const studios = await getStudioList();
 
-      if (!showData.studios.has(show.studio)) {
-        showData.studios.add(show.studio);
-      }
-    }
+    const show = transformShows(showRaw);
+    console.log(show);
+    res.render("update_show", {
+      show: show.get(animeId),
+      formats: formats,
+      genres: genres,
+      studios: studios,
+      formatDate: formatDate,
+    });
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to fetch show info");
   }
-
-  return showList;
 }
 
-export { addShow, getShowForm, getShows };
+const updateShow = [
+  validateShow,
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      const animeId = +req.params.animeId;
+      if (!errors.isEmpty()) {
+        const showRaw = await getShowById(animeId);
+        const formats = await getFormatList();
+        const genres = await getGenreList();
+        const studios = await getStudioList();
+
+        const show = transformShows(showRaw);
+        return res.render("update_show", {
+          show: show.get(animeId),
+          formats: formats,
+          genres: genres,
+          studios: studios,
+          formatDate: formatDate,
+          errors: errors.array(),
+        });
+      }
+
+      const {
+        title,
+        rating,
+        format,
+        "start-date": startDate,
+        "end-date": endDate,
+        studio,
+        genre,
+      } = matchedData(req);
+
+      await updateShowById({
+        animeId,
+        title,
+        rating,
+        format,
+        startDate,
+        endDate,
+        studio,
+        genre,
+      });
+
+      res.redirect("/shows");
+    } catch (e) {
+      console.log(e);
+      throw new Error("Something went wrong.");
+    }
+  },
+];
+
+export { addShow, getShowForm, getShows, getUpdateForm, updateShow };

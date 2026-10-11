@@ -28,28 +28,34 @@ async function addStudioWork(showTitle, studios) {
     [showTitle],
   );
 
-  const title = rows[0].anime_id;
+  const animeId = rows[0].anime_id;
+  await addEachStudioWork(animeId, studios);
+}
 
+async function addEachStudioWork(animeId, studios) {
   for (const studio of studios) {
     await pool.query(
       "INSERT INTO anime_studio (anime_id, studio_id) VALUES ($1, $2)",
-      [+title, +studio],
+      [+animeId, +studio],
     );
   }
 }
 
-async function addAnimeGenre(showTitle, genreList) {
+async function addAnimeGenre(showTitle, genres) {
   const { rows } = await pool.query(
     "SELECT anime_id FROM anime WHERE title = ($1)",
     [showTitle],
   );
 
-  const title = rows[0].anime_id;
+  const animeId = rows[0].anime_id;
+  await addEachAnimeGenre(animeId, genres);
+}
 
-  for (const genre of genreList) {
+async function addEachAnimeGenre(animeId, genres) {
+  for (const genre of genres) {
     await pool.query(
       "INSERT INTO anime_genre (anime_id, genre_id) VALUES ($1, $2)",
-      [+title, +genre],
+      [+animeId, +genre],
     );
   }
 }
@@ -70,16 +76,74 @@ async function addNewShow(show) {
 async function getAllShows() {
   const { rows } = await pool.query(
     `
-    SELECT anime.anime_id, title, rating, start_date, end_date, format.format_name AS format, genre.genre_name AS genre, studio.studio_name AS studio FROM anime 
+    SELECT anime.anime_id, title, rating, start_date, end_date, 
+    format.format_name AS format, genre.genre_name AS genre, 
+    studio.studio_name AS studio FROM anime 
     INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
     INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
     INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
     INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
-    INNER JOIN format ON (format.format_id = anime.format_id) WHERE format.format_id = anime.format_id;
+    INNER JOIN format ON (format.format_id = anime.format_id) 
+    WHERE format.format_id = anime.format_id;
     `,
   );
 
   return rows;
+}
+
+async function getShowById(animeId) {
+  const { rows } = await pool.query(
+    `
+    SELECT anime.anime_id, title, rating, start_date, end_date, 
+    format_id AS format, genre.genre_id AS genre, 
+    studio.studio_id AS studio FROM anime
+    INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id)
+    INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
+    INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
+    INNER JOIN studio ON (studio.studio_id = anime_studio.studio_id)
+    WHERE anime.anime_id = $1;
+    `,
+    [animeId],
+  );
+
+  return rows;
+}
+
+async function updateShowById(show) {
+  await pool.query(
+    `
+    UPDATE anime
+    SET
+      title = $1,
+      rating = $2,
+      start_date = $3,
+      end_date = $4,
+      format_id = $5
+    WHERE
+      anime_id = $6;
+    `,
+    [
+      show.title,
+      show.rating,
+      show.startDate,
+      show.endDate,
+      +show.format,
+      show.animeId,
+    ],
+  );
+
+  await updateAnimeGenre(show.animeId, show.genre);
+  await updateStudioWork(show.animeId, show.studio);
+}
+
+async function updateAnimeGenre(showId, genres) {
+  await pool.query("DELETE FROM anime_genre WHERE anime_id = $1;", [showId]);
+  await addEachAnimeGenre(showId, genres);
+}
+
+async function updateStudioWork(showId, studios) {
+  await pool.query("DELETE FROM anime_studio WHERE anime_id = $1", [showId]);
+  await addEachStudioWork(showId, studios);
 }
 
 export {
@@ -89,4 +153,6 @@ export {
   getTitle,
   addNewShow,
   getAllShows,
+  getShowById,
+  updateShowById,
 };

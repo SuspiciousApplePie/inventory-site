@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= show.title %></title>
+  </head>
+  <body>
+    <h1>Update</h1>
+    <form action="/update_show/<%= show.animeId %>" method="post">
+      <%- include("./partials/errors.ejs"); %>
+  
+      <label for="title">Title</label>
+      <input type="text" name="title" id="title" value="<%= show.title %>"/>
+
+      <label for="rating">Rating</label>
+      <input type="number" name="rating" id="rating" value="<%= show.rating %>"/>
+
+      <label for="start-date">Start</label>
+      <input type="date" name="start-date" id="start-date"  value="<%= formatDate(show.startDate, 'yyyy-MM-dd'); %>" />
+
+      <label for="end-date">End</label>
+      <input type="date" name="end-date" id="end-date" value="<%= show.endDate ? formatDate(show.endDate, 'yyyy-MM-dd') : null %>"/>
+
+      <label for="format">Format</label>
+      <select name="format" id="format">
+        <% for (const format of formats) { %>
+            <% if (show.format === format.format_id) { %>
+                <option selected value=<%= format.format_id %>><%= format.format_name %></option>
+            <% } else { %>
+                <option value=<%= format.format_id %>><%= format.format_name %></option>
+            <% } %>
+        <% } %>
+      </select>
+
+      <label for="genre">Genre</label>
+      <select name="genre" id="genre" multiple>
+        <% for (const genre of genres) { %>
+            <% if (show.genres.has(genre.genre_id)) { %>
+                <option selected value=<%= genre.genre_id %>><%= genre.genre_name %></option>
+            <% } else { %>
+                <option value=<%= genre.genre_id %>><%= genre.genre_name %></option>
+            <% } %>
+        <% } %>
+      </select>
+
+      <label for="studio">Studio</label>
+      <select name="studio" id="studio"  multiple>
+        <% for (const studio of studios) { %>
+            <% if (show.studios.has(studio.studio_id)) { %>
+                <option selected value=<%= studio.studio_id %>><%= studio.studio_name %></option>
+            <% } else { %>
+                <option value=<%= studio.studio_id %>><%= studio.studio_name %></option>
+            <% } %>
+        <% } %>
+      </select>
+
+      <button type="submit">Save</button>
+    </form>
+  </body>
+</html>

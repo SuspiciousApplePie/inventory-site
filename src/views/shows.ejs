@@ -21,11 +21,11 @@
                 <h4>Aired</h4>
                 <section>
                     <time datetime="<%= show.startDate %>">
-                        <%= format(show.startDate, "dd MMMM yyyy") %>
+                        <%= formatDate(show.startDate, "dd MMMM yyyy") %>
                     </time> 
                     to 
                     <time datetime="<%= show.endDate || ''%>">
-                        <%= show.endDate ? format(show.endDate, "dd MMMM yyyy") : "???" %>
+                        <%= show.endDate ? formatDate(show.endDate, "dd MMMM yyyy") : "???" %>
                     </time>
                 </section>
             </div>
