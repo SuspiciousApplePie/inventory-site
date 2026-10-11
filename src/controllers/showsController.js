@@ -23,6 +23,8 @@ const validateShow = [
     }),
   body("rating")
     .trim()
+    .isNumeric()
+    .withMessage("Please enter a valid number 1-10")
     .isInt({ min: 1, max: 10 })
     .withMessage("Rating is only range 1-10"),
   body("start-date")
