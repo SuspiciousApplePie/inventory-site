@@ -12,15 +12,28 @@ import { matchedData, body, validationResult } from "express-validator";
 import { getSeason, transformShows } from "../utils.js";
 import { format as formatDate } from "date-fns";
 
-const validateShow = [
-  body("title")
+const titleValidation = body("title")
     .trim()
     .isLength({ min: 1, max: 255 })
     .withMessage("Title must contain at least 1-255 characters.")
     .custom(async (value) => {
       const titles = await getTitle(value);
       if (titles.length !== 0) throw new Error("Show title already exists.");
-    }),
+  });
+
+const newTitleValidation = body("new-title")
+  .trim()
+  .isLength({ min: 1, max: 255 })
+  .withMessage("Title must contain at least 1-255 characters.")
+  .custom(async (value, { req }) => {
+    const { "new-title": newTitle } = req.body;
+    const showId = req.params.animeId;
+    const isUnique = await checkIfUnique(showId, newTitle);
+
+    if (!isUnique) throw new Error("Show title already exist.");
+  });
+
+const validateShow = [
   body("rating")
     .trim()
     .isNumeric()
@@ -109,7 +122,7 @@ async function getShows(req, res) {
   }
 }
 const addShow = [
-  validateShow,
+  [titleValidation, ...validateShow],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -144,7 +157,7 @@ const addShow = [
         studio,
         genre,
       });
-      res.redirect("/");
+      res.redirect("/shows");
     } catch {
       throw new Error("Something went wrong");
     }
@@ -176,7 +189,7 @@ async function getUpdateForm(req, res) {
 }
 
 const updateShow = [
-  validateShow,
+  [newTitleValidation, ...validateShow],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -199,7 +212,7 @@ const updateShow = [
       }
 
       const {
-        title,
+        "new-title": title,
         rating,
         format,
         "start-date": startDate,

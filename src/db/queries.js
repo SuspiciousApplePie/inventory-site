@@ -146,6 +146,15 @@ async function updateStudioWork(showId, studios) {
   await addEachStudioWork(showId, studios);
 }
 
+async function checkIfUnique(showId, title) {
+  const { rows } = await pool.query(
+    "SELECT anime_id FROM anime WHERE title = $1 AND anime_id != $2;",
+    [title, showId],
+  );
+  console.log(rows);
+  return rows.length === 0 ? true : false;
+}
+
 export {
   getGenreList,
   getStudioList,
@@ -155,4 +164,5 @@ export {
   getAllShows,
   getShowById,
   updateShowById,
+  checkIfUnique,
 };
