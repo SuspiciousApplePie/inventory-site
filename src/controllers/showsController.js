@@ -7,18 +7,20 @@ import {
   getAllShows,
   getShowById,
   updateShowById,
+  checkIfUnique,
+  deleteShowById,
 } from "../db/queries.js";
 import { matchedData, body, validationResult } from "express-validator";
 import { getSeason, transformShows } from "../utils.js";
 import { format as formatDate } from "date-fns";
 
 const titleValidation = body("title")
-    .trim()
-    .isLength({ min: 1, max: 255 })
-    .withMessage("Title must contain at least 1-255 characters.")
-    .custom(async (value) => {
-      const titles = await getTitle(value);
-      if (titles.length !== 0) throw new Error("Show title already exists.");
+  .trim()
+  .isLength({ min: 1, max: 255 })
+  .withMessage("Title must contain at least 1-255 characters.")
+  .custom(async (value) => {
+    const titles = await getTitle(value);
+    if (titles.length !== 0) throw new Error("Show title already exists.");
   });
 
 const newTitleValidation = body("new-title")
@@ -174,7 +176,7 @@ async function getUpdateForm(req, res) {
     const studios = await getStudioList();
 
     const show = transformShows(showRaw);
-    console.log(show);
+
     res.render("update_show", {
       show: show.get(animeId),
       formats: formats,
@@ -182,8 +184,7 @@ async function getUpdateForm(req, res) {
       studios: studios,
       formatDate: formatDate,
     });
-  } catch (e) {
-    console.log(e);
+  } catch {
     throw new Error("Failed to fetch show info");
   }
 }
@@ -233,11 +234,39 @@ const updateShow = [
       });
 
       res.redirect("/shows");
-    } catch (e) {
-      console.log(e);
+    } catch {
       throw new Error("Something went wrong.");
     }
   },
 ];
 
-export { addShow, getShowForm, getShows, getUpdateForm, updateShow };
+async function getDeleteForm(req, res) {
+  const animeId = +req.params.animeId;
+  try {
+    const showRaw = await getShowById(animeId);
+    const show = transformShows(showRaw);
+    const title = show.get(animeId).title;
+    res.render("delete_show", { show: { animeId, title } });
+  } catch {
+    throw new Error("Something went wrong");
+  }
+}
+async function deleteShow(req, res) {
+  const animeId = +req.params.animeId;
+  try {
+    await deleteShowById(animeId);
+    res.redirect("/shows");
+  } catch {
+    throw new Error("Something went wrong");
+  }
+}
+
+export {
+  addShow,
+  getShowForm,
+  getShows,
+  getUpdateForm,
+  updateShow,
+  getDeleteForm,
+  deleteShow,
+};

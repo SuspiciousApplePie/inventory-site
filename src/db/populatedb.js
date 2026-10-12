@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS anime_studio (
     anime_id INT NOT NULL,
     studio_id INT NOT NULL,
     PRIMARY KEY(anime_id, studio_id),
-    FOREIGN KEY(anime_id) REFERENCES anime (anime_id),
+    FOREIGN KEY(anime_id) REFERENCES anime (anime_id) ON DELETE CASCADE,
     FOREIGN KEY(studio_id) REFERENCES studio (studio_id) ON DELETE CASCADE
 );
 
@@ -41,11 +41,12 @@ CREATE TABLE IF NOT EXISTS anime_genre (
     anime_id INT NOT NULL,
     genre_id INT NOT NULL,
     PRIMARY KEY(anime_id, genre_id),
-    FOREIGN KEY(anime_id) REFERENCES anime (anime_id),
+    FOREIGN KEY(anime_id) REFERENCES anime (anime_id) ON DELETE CASCADE,
     FOREIGN KEY(genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE
 );
 
 INSERT INTO format (format_name) VALUES ('TV');
+INSERT INTO format (format_name) VALUES ('Movie');
 INSERT INTO genre (genre_name) VALUES ('Action');
 INSERT INTO genre (genre_name) VALUES ('Comedy');
 INSERT INTO genre (genre_name) VALUES ('Romance');

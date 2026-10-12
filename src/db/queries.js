@@ -151,8 +151,12 @@ async function checkIfUnique(showId, title) {
     "SELECT anime_id FROM anime WHERE title = $1 AND anime_id != $2;",
     [title, showId],
   );
-  console.log(rows);
+
   return rows.length === 0 ? true : false;
+}
+
+async function deleteShowById(showId) {
+  await pool.query("DELETE FROM anime WHERE anime_id = $1;", [showId]);
 }
 
 export {
@@ -165,4 +169,5 @@ export {
   getShowById,
   updateShowById,
   checkIfUnique,
+  deleteShowById,
 };

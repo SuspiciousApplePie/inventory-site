@@ -5,6 +5,8 @@ import {
   getShows,
   getUpdateForm,
   updateShow,
+  getDeleteForm,
+  deleteShow,
 } from "../controllers/showsController.js";
 
 const showsApp = Router();
@@ -14,4 +16,6 @@ showsApp.post("/add_show", addShow);
 showsApp.get("/shows", getShows);
 showsApp.get("/update_show/:animeId", getUpdateForm);
 showsApp.post("/update_show/:animeId", updateShow);
+showsApp.get("/delete_show/:animeId", getDeleteForm);
+showsApp.post("/delete_show/:animeId", deleteShow);
 export default showsApp;
