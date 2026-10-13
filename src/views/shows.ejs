@@ -6,22 +6,14 @@
     <title>Anime List</title>
   </head>
   <body>
-    <form action="/shows" method="get">
-        <label for="sort">Sort By:</label>
-        <select name="sort" id="sort">
-            <option value="title" selected>Title</option>
-            <option value="rating">Rating</option>
-            <option value="genre">Genre</option>
-            <option value="start_date">Date</option>
-            <option value="studio">Studio</option>
-        </select>
-        <label for="ord">Order By:</label>
-        <select name="ord" id="ord">
-            <option value="asc" selected>Ascending</option>
-            <option value="desc">Descending</option>
-        </select>
-        <button type="submit">Sort</button>
-    </form>
+    <search>
+        <form action="/shows" method="get">
+            <input type="search" name="search" id="search" placeholder="Search anime">
+            <button type="submit">Search</button>
+        </form>
+        <%- include("./partials/errors.ejs") %>
+    </search>
+    <%- include("./partials/filterForm.ejs"); %>
     <% shows.forEach((show) => { %>
         <div>
             <h1><%= show.title %></h1>

@@ -10,8 +10,9 @@ import {
   checkIfUnique,
   deleteShowById,
   getShowSortBy,
+  getShowBySearch,
 } from "../db/queries.js";
-import { matchedData, body, validationResult } from "express-validator";
+import { matchedData, body, query, validationResult } from "express-validator";
 import { getSeason, transformShows } from "../utils.js";
 import { format as formatDate } from "date-fns";
 
@@ -96,6 +97,16 @@ const validateShow = [
   }),
 ];
 
+const validateSearch = [
+  query("search")
+    .trim()
+    .notEmpty()
+    .withMessage("Search bar cannot be empty")
+    .bail()
+    .isLength({ max: 255 })
+    .withMessage("Characters cannot exceed 255 characters"),
+];
+
 async function getShowForm(req, res) {
   try {
     const genres = await getGenreList();
@@ -111,33 +122,53 @@ async function getShowForm(req, res) {
   }
 }
 
-async function getShows(req, res) {
-  try {
-    const { sort, ord } = req.query;
-    const VALID_SORTS = new Set([
-      "title",
-      "rating",
-      "start_date",
-      "genre",
-      "studio",
-    ]);
-    const VALID_ORD = new Set(["asc", "desc"]);
-    const safeOrd = VALID_ORD.has(ord) ? ord : "asc";
+const getShows = [
+  validateSearch,
+  async (req, res) => {
+    try {
+      const { search } = req.query;
+      if (search !== undefined) {
+        const errors = validationResult(req);
+        const showRaw = !errors.isEmpty()
+          ? await getAllShows()
+          : await getShowBySearch(search);
 
-    const shows = VALID_SORTS.has(sort)
-      ? await getShowSortBy(sort, safeOrd)
-      : await getAllShows();
+        const shows = transformShows(showRaw);
+        res.render("shows", {
+          errors: !errors.isEmpty() ? errors.array() : undefined,
+          shows: shows,
+          getSeason: getSeason,
+          formatDate: formatDate,
+        });
+      } else {
+        const { sort, ord } = req.query;
+        const VALID_SORTS = new Set([
+          "title",
+          "rating",
+          "start_date",
+          "genre",
+          "studio",
+        ]);
+        const VALID_ORD = new Set(["asc", "desc"]);
+        const safeOrd = VALID_ORD.has(ord) ? ord : "asc";
 
-    const transformedShows = transformShows(shows);
-    res.render("shows", {
-      shows: transformedShows,
-      getSeason: getSeason,
-      formatDate: formatDate,
-    });
-  } catch {
-    throw new Error("Something went wrong.");
-  }
-}
+        const shows = VALID_SORTS.has(sort)
+          ? await getShowSortBy(sort, safeOrd)
+          : await getAllShows();
+
+        const transformedShows = transformShows(shows);
+        res.render("shows", {
+          shows: transformedShows,
+          getSeason: getSeason,
+          formatDate: formatDate,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error("Something went wrong.");
+    }
+  },
+];
 const addShow = [
   [titleValidation, ...validateShow],
   async (req, res) => {
