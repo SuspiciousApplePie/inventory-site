@@ -159,6 +159,25 @@ async function deleteShowById(showId) {
   await pool.query("DELETE FROM anime WHERE anime_id = $1;", [showId]);
 }
 
+async function getShowSortBy(search, ordType) {
+  const ordBy = ordType === "asc" ? "ASC" : "DESC";
+  const { rows } = await pool.query(
+    `
+    SELECT anime.anime_id, title, rating, start_date, end_date, 
+    format.format_name AS format, genre.genre_name AS genre, 
+    studio.studio_name AS studio FROM anime 
+    INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
+    INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
+    INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
+    INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
+    INNER JOIN format ON (format.format_id = anime.format_id) 
+    WHERE format.format_id = anime.format_id ORDER BY ${search} ${ordBy};
+    `,
+  );
+
+  return rows;
+}
+
 export {
   getGenreList,
   getStudioList,
@@ -170,4 +189,5 @@ export {
   updateShowById,
   checkIfUnique,
   deleteShowById,
+  getShowSortBy,
 };

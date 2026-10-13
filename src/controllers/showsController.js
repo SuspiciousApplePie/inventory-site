@@ -9,6 +9,7 @@ import {
   updateShowById,
   checkIfUnique,
   deleteShowById,
+  getShowSortBy,
 } from "../db/queries.js";
 import { matchedData, body, validationResult } from "express-validator";
 import { getSeason, transformShows } from "../utils.js";
@@ -112,7 +113,21 @@ async function getShowForm(req, res) {
 
 async function getShows(req, res) {
   try {
-    const shows = await getAllShows();
+    const { sort, ord } = req.query;
+    const VALID_SORTS = new Set([
+      "title",
+      "rating",
+      "start_date",
+      "genre",
+      "studio",
+    ]);
+    const VALID_ORD = new Set(["asc", "desc"]);
+    const safeOrd = VALID_ORD.has(ord) ? ord : "asc";
+
+    const shows = VALID_SORTS.has(sort)
+      ? await getShowSortBy(sort, safeOrd)
+      : await getAllShows();
+
     const transformedShows = transformShows(shows);
     res.render("shows", {
       shows: transformedShows,
