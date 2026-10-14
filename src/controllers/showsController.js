@@ -122,6 +122,15 @@ async function getShowForm(req, res) {
   }
 }
 
+const VALID_SORTS = new Set([
+  "title",
+  "rating",
+  "start_date",
+  "genre",
+  "studio",
+  "format",
+]);
+const VALID_ORD = new Set(["asc", "desc"]);
 const getShows = [
   validateSearch,
   async (req, res) => {
@@ -142,14 +151,6 @@ const getShows = [
         });
       } else {
         const { sort, ord } = req.query;
-        const VALID_SORTS = new Set([
-          "title",
-          "rating",
-          "start_date",
-          "genre",
-          "studio",
-        ]);
-        const VALID_ORD = new Set(["asc", "desc"]);
         const safeOrd = VALID_ORD.has(ord) ? ord : "asc";
 
         const shows = VALID_SORTS.has(sort)
@@ -163,8 +164,7 @@ const getShows = [
           formatDate: formatDate,
         });
       }
-    } catch (e) {
-      console.log(e);
+    } catch {
       throw new Error("Something went wrong.");
     }
   },

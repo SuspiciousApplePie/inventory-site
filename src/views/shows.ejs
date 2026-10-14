@@ -6,6 +6,7 @@
     <title>Anime List</title>
   </head>
   <body>
+    <%- include('./partials/navbar.ejs') %>
     <search>
         <form action="/shows" method="get">
             <input type="search" name="search" id="search" placeholder="Search anime">
@@ -13,6 +14,7 @@
         </form>
         <%- include("./partials/errors.ejs") %>
     </search>
+    <button><a href="/add_show">Add a show</a></button>
     <%- include("./partials/filterForm.ejs"); %>
     <% shows.forEach((show) => { %>
         <div>
@@ -43,6 +45,14 @@
                     <li><%= studio %></li>
                 <% }; %>
             </ul>
+            <div>
+                <button type="button">
+                    <a href="<%= `/update_show/${show.animeId}` %>">Edit</a>
+                </button>
+                <button type="button">
+                    <a href="<%= `/delete_show/${show.animeId}` %>">Delete</a>
+                </button>
+            </div>
         </div>
     <% }); %>
   </body>
