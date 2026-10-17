@@ -35,8 +35,46 @@ function transformShows(shows) {
       }
     }
   }
-
   return showList;
 }
 
-export { getSeason, transformShows };
+const VALID_SORTS = new Map([
+  ["default", "anime.anime_id"],
+  ["title", "title"],
+  ["rating", "rating"],
+  ["date", "start_date"],
+  ["format", "format"],
+  ["genre", "sort_genre"],
+  ["studio", "sort_studio"],
+]);
+function cleanSortType(sortType) {
+  return VALID_SORTS.get(sortType) ?? VALID_SORTS.get("default");
+}
+
+const VALID_ORD = new Map([
+  ["asc", "ASC"],
+  ["desc", "DESC"],
+]);
+function cleanOrdType(ord) {
+  return VALID_ORD.get(ord) ?? VALID_ORD.get("asc");
+}
+
+function calculateOffSet(rows, limit = 10) {
+  return Math.ceil(rows / limit);
+}
+
+function cleanOffSet(offset, maxOffset) {
+  if (!offset) return 1;
+  else if (offset > maxOffset) return maxOffset;
+  else if (offset < 1) return 1;
+  else return offset;
+}
+
+export {
+  getSeason,
+  transformShows,
+  calculateOffSet,
+  cleanOffSet,
+  cleanSortType,
+  cleanOrdType,
+};

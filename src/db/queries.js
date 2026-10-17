@@ -73,24 +73,6 @@ async function addNewShow(show) {
   await addAnimeGenre(show.title, show.genre);
 }
 
-async function getAllShows() {
-  const { rows } = await pool.query(
-    `
-    SELECT anime.anime_id, title, rating, start_date, end_date, 
-    format.format_name AS format, genre.genre_name AS genre, 
-    studio.studio_name AS studio FROM anime 
-    INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
-    INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
-    INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
-    INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
-    INNER JOIN format ON (format.format_id = anime.format_id) 
-    WHERE format.format_id = anime.format_id;
-    `,
-  );
-
-  return rows;
-}
-
 async function getShowById(animeId) {
   const { rows } = await pool.query(
     `
@@ -159,42 +141,43 @@ async function deleteShowById(showId) {
   await pool.query("DELETE FROM anime WHERE anime_id = $1;", [showId]);
 }
 
-async function getShowSortBy(sort, ordType) {
-  const ordBy = ordType === "asc" ? "ASC" : "DESC";
+async function getShowSortBy(sort, ord, page, search = null, limit = 10) {
+  const queryItems = search
+    ? [limit, (page - 1) * limit, `%${search}%`]
+    : [limit, (page - 1) * limit];
+
   const { rows } = await pool.query(
     `
     SELECT anime.anime_id, title, rating, start_date, end_date, 
     format.format_name AS format, genre.genre_name AS genre, 
-    studio.studio_name AS studio FROM anime 
+    studio.studio_name AS studio FROM 
+    (
+      SELECT anime.*, MIN(genre_name) AS sort_genre, MIN(studio_name) AS sort_studio
+      FROM anime 
+      INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id)
+      INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
+      INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
+      INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
+      ${search ? `WHERE anime.title ILIKE $3` : ""}
+      GROUP BY anime.anime_id
+      ORDER BY ${sort} ${ord}, anime.anime_id LIMIT $1 OFFSET $2
+    ) AS anime 
     INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
     INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
     INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
     INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
     INNER JOIN format ON (format.format_id = anime.format_id) 
-    WHERE format.format_id = anime.format_id ORDER BY ${sort} ${ordBy};
+    ORDER BY ${sort} ${ord}, anime.anime_id;
     `,
+    queryItems,
   );
 
   return rows;
 }
 
-async function getShowBySearch(search) {
-  const { rows } = await pool.query(
-    `
-    SELECT anime.anime_id, title, rating, start_date, end_date, 
-    format.format_name AS format, genre.genre_name AS genre, 
-    studio.studio_name AS studio FROM anime 
-    INNER JOIN anime_genre ON (anime.anime_id = anime_genre.anime_id) 
-    INNER JOIN genre ON (genre.genre_id = anime_genre.genre_id)
-    INNER JOIN anime_studio ON (anime.anime_id = anime_studio.anime_id)
-    INNER JOIN studio ON (anime_studio.studio_id = studio.studio_id)
-    INNER JOIN format ON (format.format_id = anime.format_id) 
-    WHERE format.format_id = anime.format_id AND title ILIKE ($1);
-    `,
-    [`%${search}%`],
-  );
-
-  return rows;
+async function getTotalShows() {
+  const { rows } = await pool.query(`SELECT COUNT(anime_id) FROM anime;`);
+  return +rows[0].count;
 }
 
 export {
@@ -203,11 +186,10 @@ export {
   getFormatList,
   getTitle,
   addNewShow,
-  getAllShows,
   getShowById,
   updateShowById,
   checkIfUnique,
   deleteShowById,
   getShowSortBy,
-  getShowBySearch,
+  getTotalShows,
 };
