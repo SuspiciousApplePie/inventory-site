@@ -58,23 +58,123 @@ const VALID_ORD = new Map([
 function cleanOrdType(ord) {
   return VALID_ORD.get(ord) ?? VALID_ORD.get("asc");
 }
-
-function calculateOffSet(rows, limit = 10) {
+function calculateMaxPage(rows, limit = 10) {
   return Math.ceil(rows / limit);
 }
 
-function cleanOffSet(offset, maxOffset) {
-  if (!offset) return 1;
-  else if (offset > maxOffset) return maxOffset;
-  else if (offset < 1) return 1;
-  else return offset;
+function cleanPageCount(page, totalPage) {
+  const cleanPage = +page;
+  if (!cleanPage) return 1;
+  else if (cleanPage > totalPage) return totalPage;
+  else if (cleanPage < 1) return 1;
+  else return cleanPage;
 }
 
+function getURLs(
+  totalPage,
+  sort = "default",
+  ord = "asc",
+  search = null,
+  currentPage = 1,
+) {
+  const pages = arrangeURLPageNumbers(currentPage, totalPage);
+  const pageURLs = constructURL(pages, sort, ord, search, currentPage);
+  return pageURLs;
+}
+
+function arrangeURLPageNumbers(currentPage, totalPage) {
+  const start = currentPage - 1;
+  const end = currentPage + 1;
+  const pages = new Set([1, totalPage]);
+
+  for (let curr = start; curr <= end; curr++) {
+    if (curr <= 1) continue;
+    else if (curr >= totalPage) continue;
+    else pages.add(curr);
+  }
+
+  if (start - 1 === 2) pages.add(start - 1);
+  if (totalPage - end === 2) pages.add(end + 1);
+
+  return [...pages].sort((a, b) => a - b);
+}
+
+function constructURL(pages, sort, ord, search, currentPage) {
+  const pageURLs = [];
+  let prev = null;
+  for (const pageNum of pages) {
+    const pageURL = new URLSearchParams([
+      ["sort", sort],
+      ["ord", ord],
+      ["search", search],
+      ["page", pageNum],
+    ]);
+    if (prev) {
+      if (pageNum - prev !== 1) {
+        pageURLs.push(createURLObject("...", null, true));
+        pageURLs.push(
+          createURLObject(
+            pageURL.toString(),
+            pageURL.get("page"),
+            false,
+            pageNum === currentPage,
+          ),
+        );
+      } else {
+        pageURLs.push(
+          createURLObject(
+            pageURL.toString(),
+            pageURL.get("page"),
+            false,
+            pageNum === currentPage,
+          ),
+        );
+      }
+    } else {
+      pageURLs.push(
+        createURLObject(
+          pageURL.toString(),
+          pageURL.get("page"),
+          false,
+          pageNum === currentPage,
+        ),
+      );
+    }
+    prev = pageNum;
+  }
+
+  return [
+    createURLObject(
+      new URLSearchParams([
+        ["sort", sort],
+        ["ord", ord],
+        ["search", search],
+        ["page", currentPage - 1],
+      ]),
+      "Prev",
+    ),
+    ...pageURLs,
+    createURLObject(
+      new URLSearchParams([
+        ["sort", sort],
+        ["ord", ord],
+        ["search", search],
+        ["page", currentPage + 1],
+      ]),
+      "Next",
+    ),
+  ];
+}
+
+function createURLObject(url, text, isEllipsis = false, isActive = false) {
+  return { url, text, isEllipsis, isActive };
+}
 export {
   getSeason,
   transformShows,
-  calculateOffSet,
-  cleanOffSet,
+  calculateMaxPage,
+  cleanPageCount,
   cleanSortType,
   cleanOrdType,
+  getURLs,
 };

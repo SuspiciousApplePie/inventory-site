@@ -1,0 +1,9 @@
+<div>
+    <% for (const pageURL of pageURLs) { %>
+        <% if (pageURL.isEllipsis) { %>
+            <span><%= pageURL.url %></span>
+        <% } else { %>
+            <a href="<%= `/shows?${pageURL.url}` %>" class=""><%= pageURL.text %></a>
+        <% } %>
+    <% } %>
+</div>

@@ -15,10 +15,11 @@ import { matchedData, body, query, validationResult } from "express-validator";
 import {
   getSeason,
   transformShows,
-  calculateOffSet,
-  cleanOffSet,
+  calculateMaxPage,
+  cleanPageCount,
   cleanSortType,
   cleanOrdType,
+  getURLs,
 } from "../utils.js";
 import { format as formatDate } from "date-fns";
 
@@ -129,37 +130,44 @@ const getShows = [
   validateSearch,
   async (req, res) => {
     try {
-      const { sort, ord, offset } = req.query;
-      const totalShows = await getTotalShows();
-      const maxOffset = calculateOffSet(totalShows);
-      const safeOffset = cleanOffSet(offset, maxOffset);
+      const { sort, ord, page } = req.query;
       const safeSort = cleanSortType(sort);
       const safeOrd = cleanOrdType(ord);
-
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        const showRaw = await getShowSortBy(safeSort, safeOrd, safeOffset);
+        const totalShows = await getTotalShows();
+        const totalPage = calculateMaxPage(totalShows);
+        const safePage = cleanPageCount(page, totalPage);
+        const showRaw = await getShowSortBy(safeSort, safeOrd, safePage);
         const shows = transformShows(showRaw);
+        const pageURLs = getURLs(totalPage, sort, ord, "", safePage);
         res.render("shows", {
           errors: errors.array(),
           shows: shows,
           getSeason,
           formatDate,
+          pageURLs: pageURLs,
         });
       } else {
         const { search } = matchedData(req);
+        const totalShows = await getTotalShows(search);
+        const totalPage = calculateMaxPage(totalShows);
+        const safePage = cleanPageCount(page, totalPage);
         const showRaw = await getShowSortBy(
           safeSort,
           safeOrd,
-          safeOffset,
+          safePage,
           search,
         );
+        const pageURLs = getURLs(totalPage, sort, ord, search, safePage);
         const shows = transformShows(showRaw);
+        console.log(pageURLs);
         res.render("shows", {
           shows: shows,
           getSeason,
           formatDate,
+          pageURLs: pageURLs,
         });
       }
     } catch (e) {

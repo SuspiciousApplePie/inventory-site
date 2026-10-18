@@ -175,8 +175,12 @@ async function getShowSortBy(sort, ord, page, search = null, limit = 10) {
   return rows;
 }
 
-async function getTotalShows() {
-  const { rows } = await pool.query(`SELECT COUNT(anime_id) FROM anime;`);
+async function getTotalShows(search = null) {
+  const queryItems = search ? [`%${search}%`] : [];
+  const { rows } = await pool.query(
+    `SELECT COUNT(anime_id) FROM anime ${search ? "WHERE title ILIKE $1" : ""}`,
+    queryItems,
+  );
   return +rows[0].count;
 }
 

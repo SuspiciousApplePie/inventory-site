@@ -9,6 +9,11 @@
     <%- include("./partials/navbar.ejs"); %>
     <%- include("./partials/search.ejs"); %>
     <button><a href="/add_show">Add a show</a></button>
-    <%- shows.size !== 0 ? include("./partials/showsList.ejs", { shows: shows }) : include("./partials/emptyShows.ejs"); %>
+    <%- 
+      shows.size !== 0 ? 
+      include("./partials/showsList.ejs", { shows: shows }) : 
+      include("./partials/emptyShows.ejs"); 
+    %>
+    <%- include("./partials/pagination.ejs", { pageURLs: pageURLs }); %>
   </body>
 </html>
