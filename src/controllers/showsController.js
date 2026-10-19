@@ -20,6 +20,7 @@ import {
   cleanSortType,
   cleanOrdType,
   getURLs,
+  getPrevNext,
 } from "../utils.js";
 import { format as formatDate } from "date-fns";
 
@@ -141,16 +142,20 @@ const getShows = [
         const safePage = cleanPageCount(page, totalPage);
         const showRaw = await getShowSortBy(safeSort, safeOrd, safePage);
         const shows = transformShows(showRaw);
-        const pageURLs = getURLs(totalPage, sort, ord, "", safePage);
+        const pageURLs = getURLs(totalPage, safeSort, ord, "", safePage);
+        const { prev, next } = getPrevNext(safePage, totalPage, safeSort, ord);
         res.render("shows", {
           errors: errors.array(),
-          shows: shows,
+          shows,
           getSeason,
           formatDate,
-          pageURLs: pageURLs,
+          pageURLs,
+          prev,
+          next,
         });
       } else {
         const { search } = matchedData(req);
+        console.log(search);
         const totalShows = await getTotalShows(search);
         const totalPage = calculateMaxPage(totalShows);
         const safePage = cleanPageCount(page, totalPage);
@@ -160,14 +165,22 @@ const getShows = [
           safePage,
           search,
         );
-        const pageURLs = getURLs(totalPage, sort, ord, search, safePage);
+        const pageURLs = getURLs(totalPage, safeSort, ord, search, safePage);
         const shows = transformShows(showRaw);
-        console.log(pageURLs);
+        const { prev, next } = getPrevNext(
+          safePage,
+          totalPage,
+          safeSort,
+          ord,
+          search,
+        );
         res.render("shows", {
-          shows: shows,
+          shows,
           getSeason,
           formatDate,
-          pageURLs: pageURLs,
+          pageURLs,
+          prev,
+          next,
         });
       }
     } catch (e) {

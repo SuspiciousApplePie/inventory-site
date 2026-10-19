@@ -39,7 +39,7 @@ function transformShows(shows) {
 }
 
 const VALID_SORTS = new Map([
-  ["default", "anime.anime_id"],
+  ["anime.anime_id", "anime.anime_id"],
   ["title", "title"],
   ["rating", "rating"],
   ["date", "start_date"],
@@ -47,8 +47,9 @@ const VALID_SORTS = new Map([
   ["genre", "sort_genre"],
   ["studio", "sort_studio"],
 ]);
+
 function cleanSortType(sortType) {
-  return VALID_SORTS.get(sortType) ?? VALID_SORTS.get("default");
+  return VALID_SORTS.get(sortType) ?? VALID_SORTS.get("anime.anime_id");
 }
 
 const VALID_ORD = new Map([
@@ -71,29 +72,20 @@ function cleanPageCount(page, totalPage) {
   else return cleanPage;
 }
 
-function getURLs(
-  totalPage,
-  sort = "default",
-  ord = "asc",
-  search = null,
-  currentPage = 1,
-) {
+function getURLs(totalPage, sort, ord = "asc", search = "", currentPage = 1) {
   const pages = arrangeURLPageNumbers(currentPage, totalPage);
   const pageURLs = constructURL(pages, sort, ord, search, currentPage);
   return pageURLs;
 }
 
 function arrangeURLPageNumbers(currentPage, totalPage) {
-  const start = currentPage - 1;
-  const end = currentPage + 1;
+  const start = Math.max(currentPage - 1, 2);
+  const end = Math.min(currentPage + 1, totalPage - 1);
   const pages = new Set([1, totalPage]);
 
   for (let curr = start; curr <= end; curr++) {
-    if (curr <= 1) continue;
-    else if (curr >= totalPage) continue;
-    else pages.add(curr);
+    pages.add(curr);
   }
-
   if (start - 1 === 2) pages.add(start - 1);
   if (totalPage - end === 2) pages.add(end + 1);
 
@@ -144,29 +136,39 @@ function constructURL(pages, sort, ord, search, currentPage) {
     prev = pageNum;
   }
 
-  return [
-    createURLObject(
-      new URLSearchParams([
-        ["sort", sort],
-        ["ord", ord],
-        ["search", search],
-        ["page", currentPage - 1],
-      ]),
-      "Prev",
-    ),
-    ...pageURLs,
-    createURLObject(
-      new URLSearchParams([
-        ["sort", sort],
-        ["ord", ord],
-        ["search", search],
-        ["page", currentPage + 1],
-      ]),
-      "Next",
-    ),
-  ];
+  return pageURLs;
 }
 
+function getPrevNext(currentPage, maxPage, sort, ord, search) {
+  return {
+    prev: getPrev(currentPage, sort, ord, search),
+    next: getNext(currentPage, maxPage, sort, ord, search),
+  };
+}
+
+function getPrev(currentPage, sort, ord, search = null) {
+  if (currentPage > 1) {
+    const pageURL = new URLSearchParams([
+      ["sort", sort],
+      ["ord", ord],
+      ["search", search],
+      ["page", currentPage - 1],
+    ]);
+    return createURLObject(pageURL, "Prev");
+  } else return null;
+}
+
+function getNext(currentPage, maxPage, sort, ord, search) {
+  if (currentPage < maxPage) {
+    const pageURL = new URLSearchParams([
+      ["sort", sort],
+      ["ord", ord],
+      ["search", search],
+      ["page", currentPage + 1],
+    ]);
+    return createURLObject(pageURL, "Next");
+  } else return null;
+}
 function createURLObject(url, text, isEllipsis = false, isActive = false) {
   return { url, text, isEllipsis, isActive };
 }
@@ -178,4 +180,5 @@ export {
   cleanSortType,
   cleanOrdType,
   getURLs,
+  getPrevNext,
 };

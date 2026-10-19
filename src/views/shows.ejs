@@ -14,6 +14,12 @@
       include("./partials/showsList.ejs", { shows: shows }) : 
       include("./partials/emptyShows.ejs"); 
     %>
+    <% if (prev) { %>
+      <a href="<%= `/shows?=${prev.url}` %>">Prev</a>
+    <% } %>
     <%- include("./partials/pagination.ejs", { pageURLs: pageURLs }); %>
+    <% if (next) { %>
+      <a href="<%= `/shows?=${next.url}` %>">Next</a>
+    <% } %>
   </body>
 </html>
