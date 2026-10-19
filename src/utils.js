@@ -59,7 +59,8 @@ function cleanOrdType(ord) {
   return VALID_ORD.get(ord) ?? VALID_ORD.get("asc");
 }
 function calculateMaxPage(rows, limit = 10) {
-  return Math.ceil(rows / limit);
+  const ceil = Math.ceil(rows / limit);
+  return ceil ? ceil : 1;
 }
 
 function cleanPageCount(page, totalPage) {
