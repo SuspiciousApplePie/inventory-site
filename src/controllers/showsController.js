@@ -74,33 +74,37 @@ const validateShow = [
       return true;
     }),
   body("format")
-    .customSanitizer((format) => (Array.isArray(format) ? format : [format]))
-    .isArray({ min: 1 })
-    .withMessage("Format is required."),
-  body("format.*").custom(async (formatId) => {
-    const formats = await getFormatList();
-    if (!formats.some((format) => format.format_id === +formatId)) {
-      throw new Error("Select a format type.");
-    }
-  }),
+    .notEmpty()
+    .withMessage("Format is required.")
+    .bail()
+    .isNumeric()
+    .withMessage("Invalid format value")
+    .custom(async (formatId) => {
+      const formats = await getFormatList();
+      if (!formats.some((format) => format.format_id === +formatId)) {
+        throw new Error("Select a valid format type.");
+      }
+    }),
   body("genre")
-    .customSanitizer((genre) => (Array.isArray(genre) ? genre : [genre]))
-    .isArray({ min: 1 })
-    .withMessage("Genre is required."),
+    .notEmpty()
+    .withMessage("Genre is required")
+    .bail()
+    .customSanitizer((genre) => (Array.isArray(genre) ? genre : [genre])),
   body("genre.*").custom(async (genreId) => {
     const genres = await getGenreList();
     if (!genres.some((genre) => genre.genre_id === +genreId)) {
-      throw new Error("Select a genre type.");
+      throw new Error("Select a valid genre type.");
     }
   }),
   body("studio")
-    .customSanitizer((studio) => (Array.isArray(studio) ? studio : [studio]))
-    .isArray()
-    .withMessage("Studio is required."),
+    .notEmpty()
+    .withMessage("Studio is required")
+    .bail()
+    .customSanitizer((studio) => (Array.isArray(studio) ? studio : [studio])),
   body("studio.*").custom(async (studioId) => {
     const studios = await getStudioList();
     if (!studios.some((studio) => studio.studio_id === +studioId)) {
-      throw new Error("Select a studio.");
+      throw new Error("Select a valid studio.");
     }
   }),
 ];
