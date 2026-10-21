@@ -164,13 +164,13 @@ async function main() {
     connectionString: process.argv[2],
   });
 
-  console.log("...seeding");
+  console.log("...seeding"); // eslint-disable-line no-console
 
   await client.connect();
   await client.query(SQL);
   await client.end();
 
-  console.log("Done.");
+  console.log("Done."); // eslint-disable-line no-console
 }
 
 main();

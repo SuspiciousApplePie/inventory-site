@@ -23,6 +23,7 @@ import {
   getURLs,
   getPrevNext,
 } from "../utils.js";
+import { BadRequest, PageNotFound } from "../errors/errors.js";
 import { format as formatDate } from "date-fns";
 import argon2 from "argon2";
 
@@ -129,7 +130,7 @@ const validateSearch = [
     .withMessage("Characters cannot exceed 255 characters"),
 ];
 
-async function getShowForm(req, res) {
+async function getShowForm(req, res, next) {
   try {
     const genres = await getGenreList();
     const studios = await getStudioList();
@@ -140,13 +141,13 @@ async function getShowForm(req, res) {
       formats: formats,
     });
   } catch {
-    throw new Error("Something went wrong");
+    next(new PageNotFound("Page not found."));
   }
 }
 
 const getShows = [
   validateSearch,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { sort, ord, page } = req.query;
       const safeSort = cleanSortType(sort);
@@ -198,15 +199,14 @@ const getShows = [
           next,
         });
       }
-    } catch (e) {
-      console.log(e);
-      throw new Error("Something went wrong.");
+    } catch {
+      next(new PageNotFound("Page not found."));
     }
   },
 ];
 const addShow = [
   [titleValidation, ...validateShow, passwordValidation],
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -241,15 +241,14 @@ const addShow = [
       });
       res.redirect("/shows");
     } catch {
-      throw new Error("Something went wrong");
+      next(new BadRequest("Bad Request"));
     }
   },
 ];
 
-async function getUpdateForm(req, res) {
+async function getUpdateForm(req, res, next) {
   try {
     const animeId = +req.params.animeId;
-
     const showRaw = await getShowById(animeId);
     const formats = await getFormatList();
     const genres = await getGenreList();
@@ -265,13 +264,13 @@ async function getUpdateForm(req, res) {
       formatDate: formatDate,
     });
   } catch {
-    throw new Error("Failed to fetch show info");
+    next(new PageNotFound("Page not found."));
   }
 }
 
 const updateShow = [
   [newTitleValidation, ...validateShow, passwordValidation],
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const errors = validationResult(req);
       const animeId = +req.params.animeId;
@@ -315,12 +314,12 @@ const updateShow = [
 
       res.redirect("/shows");
     } catch {
-      throw new Error("Something went wrong.");
+      next(new BadRequest("Bad Request"));
     }
   },
 ];
 
-async function getDeleteForm(req, res) {
+async function getDeleteForm(req, res, next) {
   try {
     const animeId = +req.params.animeId;
     const showRaw = await getShowById(animeId);
@@ -328,12 +327,12 @@ async function getDeleteForm(req, res) {
     const title = show.get(animeId).title;
     res.render("delete_show", { show: { animeId, title } });
   } catch {
-    throw new Error("Something went wrong");
+    next(new PageNotFound("Page not found."));
   }
 }
 const deleteShow = [
   [passwordValidation],
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const animeId = +req.params.animeId;
       const errors = validationResult(req);
@@ -349,7 +348,7 @@ const deleteShow = [
       await deleteShowById(animeId);
       res.redirect("/shows");
     } catch {
-      throw new Error("Something went wrong");
+      next(new BadRequest("Bad Request"));
     }
   },
 ];
