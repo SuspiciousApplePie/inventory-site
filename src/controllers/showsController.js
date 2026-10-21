@@ -10,6 +10,7 @@ import {
   deleteShowById,
   getShowSortBy,
   getTotalShows,
+  getHashedPassword,
 } from "../db/queries.js";
 import { matchedData, body, query, validationResult } from "express-validator";
 import {
@@ -23,6 +24,7 @@ import {
   getPrevNext,
 } from "../utils.js";
 import { format as formatDate } from "date-fns";
+import argon2 from "argon2";
 
 const titleValidation = body("title")
   .trim()
@@ -43,6 +45,17 @@ const newTitleValidation = body("new-title")
     const isUnique = await checkIfUnique(showId, newTitle);
 
     if (!isUnique) throw new Error("Show title already exist.");
+  });
+
+const passwordValidation = body("password")
+  .trim()
+  .notEmpty()
+  .withMessage("Password field cannot be empty.")
+  .bail()
+  .custom(async (password) => {
+    const hashedPass = await getHashedPassword();
+    if (!(await argon2.verify(hashedPass, password)))
+      throw new Error("Password is wrong");
   });
 
 const validateShow = [
@@ -139,7 +152,6 @@ const getShows = [
       const safeSort = cleanSortType(sort);
       const safeOrd = cleanOrdType(ord);
       const errors = validationResult(req);
-
       if (!errors.isEmpty()) {
         const totalShows = await getTotalShows();
         const totalPage = calculateMaxPage(totalShows);
@@ -159,7 +171,6 @@ const getShows = [
         });
       } else {
         const { search } = matchedData(req);
-        console.log(search);
         const totalShows = await getTotalShows(search);
         const totalPage = calculateMaxPage(totalShows);
         const safePage = cleanPageCount(page, totalPage);
@@ -194,7 +205,7 @@ const getShows = [
   },
 ];
 const addShow = [
-  [titleValidation, ...validateShow],
+  [titleValidation, ...validateShow, passwordValidation],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -219,7 +230,6 @@ const addShow = [
         studio,
         genre,
       } = matchedData(req);
-
       await addNewShow({
         title,
         rating,
@@ -260,7 +270,7 @@ async function getUpdateForm(req, res) {
 }
 
 const updateShow = [
-  [newTitleValidation, ...validateShow],
+  [newTitleValidation, ...validateShow, passwordValidation],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -311,8 +321,8 @@ const updateShow = [
 ];
 
 async function getDeleteForm(req, res) {
-  const animeId = +req.params.animeId;
   try {
+    const animeId = +req.params.animeId;
     const showRaw = await getShowById(animeId);
     const show = transformShows(showRaw);
     const title = show.get(animeId).title;
@@ -321,15 +331,28 @@ async function getDeleteForm(req, res) {
     throw new Error("Something went wrong");
   }
 }
-async function deleteShow(req, res) {
-  const animeId = +req.params.animeId;
-  try {
-    await deleteShowById(animeId);
-    res.redirect("/shows");
-  } catch {
-    throw new Error("Something went wrong");
-  }
-}
+const deleteShow = [
+  [passwordValidation],
+  async (req, res) => {
+    try {
+      const animeId = +req.params.animeId;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const showRaw = await getShowById(animeId);
+        const show = transformShows(showRaw);
+        const title = show.get(animeId).title;
+        return res.render("delete_show", {
+          show: { animeId, title },
+          errors: errors.array(),
+        });
+      }
+      await deleteShowById(animeId);
+      res.redirect("/shows");
+    } catch {
+      throw new Error("Something went wrong");
+    }
+  },
+];
 
 export {
   addShow,

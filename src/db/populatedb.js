@@ -2,7 +2,12 @@ import { Client } from "pg";
 import process from "node:process";
 
 const SQL = `
-CREATE TABLE IF NOT EXISTS format(
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY CHECK (user_id = 1),
+    password_hash VARCHAR (255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS format (
     format_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     format_name VARCHAR ( 20 ) NOT NULL UNIQUE
 );
@@ -34,7 +39,7 @@ CREATE TABLE IF NOT EXISTS anime_studio (
     studio_id INT NOT NULL,
     PRIMARY KEY(anime_id, studio_id),
     FOREIGN KEY(anime_id) REFERENCES anime (anime_id) ON DELETE CASCADE,
-    FOREIGN KEY(studio_id) REFERENCES studio (studio_id) ON DELETE CASCADE
+    FOREIGN KEY(studio_id) REFERENCES studio (studio_id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS anime_genre (
@@ -42,9 +47,8 @@ CREATE TABLE IF NOT EXISTS anime_genre (
     genre_id INT NOT NULL,
     PRIMARY KEY(anime_id, genre_id),
     FOREIGN KEY(anime_id) REFERENCES anime (anime_id) ON DELETE CASCADE,
-    FOREIGN KEY(genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE
+    FOREIGN KEY(genre_id) REFERENCES genre (genre_id) ON DELETE RESTRICT
 );
-
 
 INSERT INTO format (format_name) VALUES
 ('TV'), ('Movie'), ('OVA'), ('ONA'), ('Special'), ('TV Short');

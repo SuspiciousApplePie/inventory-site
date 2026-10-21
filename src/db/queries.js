@@ -184,6 +184,11 @@ async function getTotalShows(search = null) {
   return +rows[0].count;
 }
 
+async function getHashedPassword() {
+  const { rows } = await pool.query("SELECT password_hash FROM users LIMIT 1;");
+  return rows[0].password_hash;
+}
+
 export {
   getGenreList,
   getStudioList,
@@ -196,4 +201,5 @@ export {
   deleteShowById,
   getShowSortBy,
   getTotalShows,
+  getHashedPassword,
 };
