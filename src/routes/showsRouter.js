@@ -7,10 +7,11 @@ import {
   updateShow,
   getDeleteForm,
   deleteShow,
+  getHomepage,
 } from "../controllers/showsController.js";
 
 const showsApp = Router();
-
+showsApp.get("/", getHomepage);
 showsApp.get("/add_show", getShowForm);
 showsApp.post("/add_show", addShow);
 showsApp.get("/shows", getShows);

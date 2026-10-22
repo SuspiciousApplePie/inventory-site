@@ -27,6 +27,10 @@ import { BadRequest, PageNotFound } from "../errors/errors.js";
 import { format as formatDate } from "date-fns";
 import argon2 from "argon2";
 
+const navBar = [
+  { url: "/", text: "Home" },
+  { url: "/shows", text: "Shows" },
+];
 const titleValidation = body("title")
   .trim()
   .isLength({ min: 1, max: 255 })
@@ -145,6 +149,10 @@ async function getShowForm(req, res, next) {
   }
 }
 
+function getHomepage(req, res) {
+  res.render("index", { navBar, active: navBar[0].url });
+}
+
 const getShows = [
   validateSearch,
   async (req, res, next) => {
@@ -197,6 +205,8 @@ const getShows = [
           pageURLs,
           prev,
           next,
+          navBar,
+          active: navBar[1].url,
         });
       }
     } catch {
@@ -361,4 +371,5 @@ export {
   updateShow,
   getDeleteForm,
   deleteShow,
+  getHomepage,
 };

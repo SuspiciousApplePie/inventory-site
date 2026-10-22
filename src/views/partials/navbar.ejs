@@ -1,6 +1,11 @@
 <nav>
   <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/shows">Shows</a></li>
+    <% for (const link of navBar) { %>
+      <li>
+        <a href="<%= link.url %>" class=<%= active === link.url ? "active" : ""%>>
+          <%= link.text %>
+        </a>
+      </li>
+    <% } %>
   </ul>
 </nav>
