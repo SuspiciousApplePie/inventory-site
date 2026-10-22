@@ -157,10 +157,10 @@ const getShows = [
         const totalShows = await getTotalShows();
         const totalPage = calculateMaxPage(totalShows);
         const safePage = cleanPageCount(page, totalPage);
-        const showRaw = await getShowSortBy(safeSort, safeOrd, safePage);
+        const showRaw = await getShowSortBy(sort, safeOrd, safePage);
         const shows = transformShows(showRaw);
-        const pageURLs = getURLs(totalPage, safeSort, ord, "", safePage);
-        const { prev, next } = getPrevNext(safePage, totalPage, safeSort, ord);
+        const pageURLs = getURLs(totalPage, sort, ord, "", safePage);
+        const { prev, next } = getPrevNext(safePage, totalPage, sort, ord);
         res.render("shows", {
           errors: errors.array(),
           shows,
@@ -181,12 +181,12 @@ const getShows = [
           safePage,
           search,
         );
-        const pageURLs = getURLs(totalPage, safeSort, ord, search, safePage);
+        const pageURLs = getURLs(totalPage, sort, ord, search, safePage);
         const shows = transformShows(showRaw);
         const { prev, next } = getPrevNext(
           safePage,
           totalPage,
-          safeSort,
+          sort,
           ord,
           search,
         );
