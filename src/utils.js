@@ -72,9 +72,17 @@ function cleanPageCount(page, totalPage) {
   else return cleanPage;
 }
 
-function getURLs(totalPage, sort = "", ord = "", search = "", currentPage = 1) {
+function getURLs(totalPage, sort, ord, search = "", currentPage = 1) {
+  const cleanSort = sort || "anime.anime_id";
+  const cleanOrd = ord || "asc";
   const pages = arrangeURLPageNumbers(currentPage, totalPage);
-  const pageURLs = constructURL(pages, sort, ord, search, currentPage);
+  const pageURLs = constructURL(
+    pages,
+    cleanSort,
+    cleanOrd,
+    search,
+    currentPage,
+  );
   return pageURLs;
 }
 
@@ -140,9 +148,11 @@ function constructURL(pages, sort, ord, search, currentPage) {
 }
 
 function getPrevNext(currentPage, maxPage, sort, ord, search) {
+  const safeSort = sort || "anime.anime_id";
+  const safeOrd = ord || "asc";
   return {
-    prev: getPrev(currentPage, sort, ord, search),
-    next: getNext(currentPage, maxPage, sort, ord, search),
+    prev: getPrev(currentPage, safeSort, safeOrd, search),
+    next: getNext(currentPage, maxPage, safeSort, safeOrd, search),
   };
 }
 
