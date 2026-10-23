@@ -1,39 +1,41 @@
-<% shows.forEach((show) => { %>
-    <div>
-        <h1><%= show.title %></h1>
-        <h2>Rating: <%= show.rating %></h2>
-        <h3><%= show.format %></h3>
-        <h3><%= getSeason(show.startDate) %></h3>
-        <ul>
-            <% for (const genre of show.genres) { %>
-                <li><%= genre %></li>
-            <% }; %>
-        </ul>
-        <div> 
-            <h4>Aired</h4>
-            <section>
-                <time datetime="<%= show.startDate %>">
-                    <%= formatDate(show.startDate, "dd MMMM yyyy") %>
-                </time> 
-                to 
-                <time datetime="<%= show.endDate || ''%>">
-                    <%= show.endDate ? formatDate(show.endDate, "dd MMMM yyyy") : "???" %>
-                </time>
-            </section>
-        </div>
+<div class="shows">
+    <% shows.forEach((show) => { %>
+        <div class="show">
+            <h1><%= show.title %></h1>
+            <h2>Rating: <%= show.rating %></h2>
+            <h3><%= show.format %></h3>
+            <h3><%= getSeason(show.startDate) %></h3>
+            <ul>
+                <% for (const genre of show.genres) { %>
+                    <li><%= genre %></li>
+                <% }; %>
+            </ul>
+            <div> 
+                <h4>Aired</h4>
+                <section>
+                    <time datetime="<%= show.startDate %>">
+                        <%= formatDate(show.startDate, "dd MMMM yyyy") %>
+                    </time> 
+                    to 
+                    <time datetime="<%= show.endDate || ''%>">
+                        <%= show.endDate ? formatDate(show.endDate, "dd MMMM yyyy") : "???" %>
+                    </time>
+                </section>
+            </div>
     
-        <ul>
-            <% for (const studio of show.studios) { %>
-                <li><%= studio %></li>
-            <% }; %>
-        </ul>
-        <div>
-            <button type="button">
-                <a href="<%= `/update_show/${show.animeId}` %>">Edit</a>
-            </button>
-            <button type="button">
-                <a href="<%= `/delete_show/${show.animeId}` %>">Delete</a>
-            </button>
+            <ul>
+                <% for (const studio of show.studios) { %>
+                    <li><%= studio %></li>
+                <% }; %>
+            </ul>
+            <div>
+                <button type="button">
+                    <a href="<%= `/update_show/${show.animeId}` %>">Edit</a>
+                </button>
+                <button type="button">
+                    <a href="<%= `/delete_show/${show.animeId}` %>">Delete</a>
+                </button>
+            </div>
         </div>
-    </div>
-<% }); %>
+    <% }); %>
+</div>

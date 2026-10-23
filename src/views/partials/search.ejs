@@ -1,22 +1,28 @@
 <search>
-  <form action="/shows" method="get">
+  <form action="/shows" method="get" class="search-form">
     <input type="search" name="search" id="search" placeholder="Search anime" />
     <%- include("./errors.ejs") %>
-    <label for="sort">Sort By:</label>
-    <select name="sort" id="sort">
-      <option value="anime.anime_id" selected>Default</option>
-      <option value="title">Title</option>
-      <option value="rating">Rating</option>
-      <option value="genre">Genre</option>
-      <option value="date">Date</option>
-      <option value="studio">Studio</option>
-      <option value="format">Format</option>
-    </select>
-    <label for="ord">Order By:</label>
-    <select name="ord" id="ord">
-      <option value="asc" selected>Ascending</option>
-      <option value="desc">Descending</option>
-    </select>
+
+    <div class="form-control">
+      <label for="sort">Sort By:</label>
+      <select name="sort" id="sort">
+        <option value="anime.anime_id" selected>Default</option>
+        <option value="title">Title</option>
+        <option value="rating">Rating</option>
+        <option value="genre">Genre</option>
+        <option value="date">Date</option>
+        <option value="studio">Studio</option>
+        <option value="format">Format</option>
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label for="ord">Order By:</label>
+      <select name="ord" id="ord">
+        <option value="asc" selected>Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    </div>
     <button type="submit">Search</button>
   </form>
 </search>
