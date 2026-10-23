@@ -43,7 +43,7 @@ const VALID_SORTS = new Map([
   ["title", "title"],
   ["rating", "rating"],
   ["date", "start_date"],
-  ["format", "format"],
+  ["format", "anime.format_id"],
   ["genre", "sort_genre"],
   ["studio", "sort_studio"],
 ]);
@@ -72,7 +72,7 @@ function cleanPageCount(page, totalPage) {
   else return cleanPage;
 }
 
-function getURLs(totalPage, sort, ord = "asc", search = "", currentPage = 1) {
+function getURLs(totalPage, sort = "", ord = "", search = "", currentPage = 1) {
   const pages = arrangeURLPageNumbers(currentPage, totalPage);
   const pageURLs = constructURL(pages, sort, ord, search, currentPage);
   return pageURLs;
