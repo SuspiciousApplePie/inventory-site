@@ -81,6 +81,7 @@ h6 {
   --color-2: #eff9f0;
   --color-3: #0a0f0d;
   --color-4: #2a1e5c;
+  --color-5: #8959b8;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
@@ -250,6 +251,8 @@ nav a {
   border-radius: 4px;
 }
 
+/* Pagination */
+
 .pagination {
   display: flex;
   flex-wrap: wrap;
@@ -288,6 +291,41 @@ nav a {
   display: inline-flex;
   align-items: end;
 }
+
+.add_show {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  background-color: var(--color-1);
+  outline: none;
+  border: none;
+  border-radius: 50%;
+  height: 3.5rem;
+  width: 3.5rem;
+  padding: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add_show svg {
+  height: var(--text-xl);
+  width: var(--text-xl);
+  fill: none;
+  color: var(--color-2);
+}
+
+.add_show svg path {
+  stroke: var(--color-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-color: round;
+}
+
+.add_show:hover,
+.add_show:focus-visible {
+  background-color: var(--color-5);
+}
 @media (max-width: 907px) {
   header {
     display: block;
@@ -323,5 +361,10 @@ nav a {
 
   .show .description {
     border-radius: 0 0 8px 8px;
+  }
+
+  .add_show {
+    right: var(--space-3);
+    bottom: var(--space-3);
   }
 }
