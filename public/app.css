@@ -162,6 +162,93 @@ nav a {
   background-color: var(--color-2);
   color: var(--color-1);
 }
+/* Cards */
+
+.shows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+.show {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  border: 1px solid var(--color-4);
+  border-radius: 8px;
+}
+
+.show .image {
+  display: flex;
+}
+
+.show .image img {
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  border-radius: 8px 0 0 8px;
+}
+.show .description {
+  background-color: var(--color-4);
+  color: var(--color-2);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-radius: 0 8px 8px 0;
+}
+
+.show .title {
+  font-size: var(--text-lg);
+}
+
+.show .rating,
+.show .season,
+.show .studio-list,
+.show .air-date,
+.show .format,
+.show .genre-list,
+.show .buttons {
+  font-size: var(--text-sm);
+}
+
+.show .buttons button {
+  border: none;
+  outline: none;
+  padding: 0;
+  background-color: transparent;
+}
+
+.show .buttons a:hover,
+.show .buttons a:focus-visible {
+  background-color: var(--color-1);
+  color: var(--color-2);
+  outline: none;
+}
+
+.show .buttons a {
+  display: block;
+  padding: 0 var(--space-1) 0 var(--space-1);
+  color: var(--color-3);
+  border-radius: var(--space-1);
+  background-color: var(--color-2);
+}
+
+.show .genre-list,
+.show .studio-list {
+  list-style-type: none;
+  display: flex;
+  padding-left: 0;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.show .genre-list li,
+.show .studio-list li {
+  border: 1px solid var(--color-2);
+  padding: 2px;
+  border-radius: 4px;
+}
 
 @media (max-width: 907px) {
   header {
@@ -176,5 +263,27 @@ nav a {
   .search-form .form-control {
     display: flex;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 475px) {
+  .shows {
+    grid-template-columns: 1fr;
+  }
+
+  .show {
+    grid-template-columns: 1fr;
+  }
+
+  .show .image {
+    justify-content: center;
+  }
+
+  .show .image img {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .show .description {
+    border-radius: 0 0 8px 8px;
   }
 }
