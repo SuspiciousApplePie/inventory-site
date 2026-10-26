@@ -250,6 +250,44 @@ nav a {
   border-radius: 4px;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: var(--space-3);
+  gap: var(--space-3);
+  font-size: var(--text-base);
+}
+
+.pagination a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-2);
+  border: 1px solid var(--color-4);
+  border-radius: 4px;
+  color: var(--color-4);
+  padding: var(--space-2);
+  min-width: 30px;
+  height: 30px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pagination a:hover,
+.pagination a:focus-visible {
+  background-color: var(--color-1);
+  color: var(--color-2);
+}
+
+.pagination a.active {
+  background-color: var(--color-4);
+  color: var(--color-2);
+}
+
+.pagination span {
+  display: inline-flex;
+  align-items: end;
+}
 @media (max-width: 907px) {
   header {
     display: block;

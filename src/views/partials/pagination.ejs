@@ -1,11 +1,17 @@
 <% if (pageURLs.length > 1) { %>
-    <div>
+    <div class="pagination">
+        <% if (prev) { %>
+            <a href="<%= `/shows?${prev.url}` %>">Prev</a>
+        <% } %>
         <% for (const pageURL of pageURLs) { %>
             <% if (pageURL.isEllipsis) { %>
                 <span><%= pageURL.url %></span>
             <% } else { %>
-                <a href="<%= `/shows?${pageURL.url}` %>" class=""><%= pageURL.text %></a>
+                <a href="<%= `/shows?${pageURL.url}` %>" class=<%= pageURL.isActive ? "active" : "" %>><%= pageURL.text %></a>
             <% } %>
+        <% } %>
+        <% if (next) { %>
+            <a href="<%= `/shows?${next.url}` %>">Next</a>
         <% } %>
     </div>
 <% } %>
