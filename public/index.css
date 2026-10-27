@@ -1,0 +1,63 @@
+.hero {
+  padding: 120px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("./bg.jpg");
+  background-size: cover;
+  color: var(--color-2);
+  position: relative;
+  flex: 1;
+}
+
+.hero a {
+  font-size: var(--text-base);
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+}
+
+.hero h1 {
+  font-size: calc(var(--text-xl) * 2);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hero h1 svg,
+.hero a svg {
+  height: calc(var(--text-xl) * 2);
+  width: calc(var(--text-xl) * 2);
+  fill: none;
+  color: var(--color-2);
+}
+
+.hero a svg {
+  height: var(--text-lg);
+  width: var(--text-lg);
+}
+
+.hero h1 path,
+.hero a path {
+  stroke: var(--color-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-color: round;
+}
+
+.hero a {
+  font-size: var(--text-base);
+  background-color: var(--color-1);
+  color: var(--color-2);
+  padding: var(--space-2);
+  border-radius: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.hero a:hover,
+.hero a:focus-visible {
+  background-color: var(--color-5);
+}
