@@ -97,6 +97,12 @@ body {
   font-family: "Inter", Arial, Helvetica, sans-serif;
 }
 
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
 a {
   text-decoration: none;
 }
@@ -162,6 +168,12 @@ nav a {
 .search-form button[type="submit"]:hover {
   background-color: var(--color-2);
   color: var(--color-1);
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 /* Cards */
 
@@ -292,6 +304,7 @@ nav a {
   align-items: end;
 }
 
+/* Add Show Button */
 .add_show {
   position: fixed;
   right: var(--space-4);
@@ -325,6 +338,13 @@ nav a {
 .add_show:hover,
 .add_show:focus-visible {
   background-color: var(--color-5);
+}
+
+/* No anime found message */
+.empty-shows {
+  margin: auto;
+  font-size: var(--text-lg);
+  color: var(--color-4);
 }
 @media (max-width: 907px) {
   header {
