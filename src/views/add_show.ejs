@@ -4,42 +4,89 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add show</title>
+    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="/form.css" />
   </head>
   <body>
-    <h1>New Show</h1>
-    <form action="/add_show" method="post">
-      <%- include("./partials/errors.ejs"); %>
-  
-      <label for="title">Title</label>
-      <input type="text" name="title" id="title" />
+    <div class="app">
+      <header><%- include('./partials/navbar.ejs'); %></header>
+      <main>
+        <div class="form-wrapper">
+          <h1>New Show</h1>
+          <form action="/add_show" method="post" novalidate>
+            <%- include("./partials/errors.ejs"); %>
 
-      <label for="rating">Rating</label>
-      <input type="number" name="rating" id="rating" />
+            <div class="form-control">
+              <label for="title">Title <span class="required">*</span></label>
+              <input type="text" name="title" id="title"  />
+            </div>
 
-      <label for="start-date">Start</label>
-      <input type="date" name="start-date" id="start-date" />
+            <div class="joint-field">
+              <div class="form-control">
+                <label for="start-date"
+                  >Start <span class="required">*</span></label
+                >
+                <input type="date" name="start-date" id="start-date" />
+              </div>
 
-      <label for="end-date">End</label>
-      <input type="date" name="end-date" id="end-date" />
+              <div class="form-control">
+                <label for="end-date">End</label>
+                <input type="date" name="end-date" id="end-date" />
+              </div>
+            </div>
 
-      <label for="format">Format</label>
-      <select name="format" id="format">
-        <%- include("./partials/formats.ejs", { formats: formats }); %>  
-      </select>
+            <div class="joint-field">
+              <div class="form-control">
+                <label for="format"
+                  >Format <span class="required">*</span></label
+                >
+                <select name="format" id="format">
+                  <%- include("./partials/formats.ejs", { formats: formats }); %>  
+                </select>
+              </div>
 
-      <label for="genre">Genre</label>
-      <select name="genre" id="genre" multiple>
-        <%- include("./partials/genres.ejs", { genres: genres }); %>  
-      </select>
+              <div class="form-control">
+                <label for="rating"
+                  >Rating <span class="required">*</span></label
+                >
+                <input
+                  type="number"
+                  name="rating"
+                  id="rating"
+                  min="1"
+                  max="10"
+                  value="5"
+                />
+              </div>
+            </div>
 
-      <label for="studio">Studio</label>
-      <select name="studio" id="studio"  multiple>
-        <%- include("./partials/studios.ejs", { studios: studios }); %>
-      </select>
+            <div class="joint-field">
+              <div class="form-control">
+                <label for="genre">Genre <span class="required">*</span></label>
+                <select name="genre" id="genre" multiple>
+                  <%- include("./partials/genres.ejs", { genres: genres }); %>  
+                </select>
+              </div>
 
-      <%- include("./partials/password.ejs"); %>
+              <div class="form-control">
+                <label for="studio"
+                  >Studio <span class="required">*</span></label
+                >
+                <select name="studio" id="studio" multiple>
+                  <%- include("./partials/studios.ejs", { studios: studios }); %>
+                </select>
+              </div>
+            </div>
 
-      <button type="submit">Add</button>
-    </form>
+            <%- include("./partials/password.ejs"); %>
+
+            <div class="btn-wrapper">
+              <a href="/shows">Cancel</a>
+              <button type="submit">Save</button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

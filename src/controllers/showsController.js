@@ -143,6 +143,8 @@ async function getShowForm(req, res, next) {
       genres: genres,
       studios: studios,
       formats: formats,
+      navBar,
+      active: null,
     });
   } catch {
     next(new PageNotFound("Page not found."));
@@ -229,6 +231,8 @@ const addShow = [
           genres: genres,
           studios: studios,
           formats: formats,
+          navBar,
+          active: null,
         });
       }
       const {
@@ -272,6 +276,8 @@ async function getUpdateForm(req, res, next) {
       genres: genres,
       studios: studios,
       formatDate: formatDate,
+      navBar,
+      active: null,
     });
   } catch {
     next(new PageNotFound("Page not found."));
@@ -298,6 +304,8 @@ const updateShow = [
           studios: studios,
           formatDate: formatDate,
           errors: errors.array(),
+          navBar,
+          active: null,
         });
       }
 
@@ -335,7 +343,11 @@ async function getDeleteForm(req, res, next) {
     const showRaw = await getShowById(animeId);
     const show = transformShows(showRaw);
     const title = show.get(animeId).title;
-    res.render("delete_show", { show: { animeId, title } });
+    res.render("delete_show", {
+      show: { animeId, title },
+      navBar,
+      active: null,
+    });
   } catch {
     next(new PageNotFound("Page not found."));
   }
@@ -353,6 +365,8 @@ const deleteShow = [
         return res.render("delete_show", {
           show: { animeId, title },
           errors: errors.array(),
+          navBar,
+          active: null,
         });
       }
       await deleteShowById(animeId);

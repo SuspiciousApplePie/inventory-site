@@ -1,0 +1,89 @@
+main {
+  padding: var(--space-3);
+}
+
+.form-wrapper {
+  padding: var(--space-3);
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  gap: var(--space-2);
+  flex-direction: column;
+  background-color: var(--color-4);
+  color: var(--color-2);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.form-wrapper.delete {
+  max-width: 400px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-wrapper input,
+.form-wrapper select {
+  border: none;
+  border-bottom: 1px solid var(--color-4);
+  background-color: var(--color-2);
+  padding: var(--space-1);
+  border-radius: 4px;
+}
+
+.form-control select option:checked,
+.form-control select option:hover {
+  background-color: var(--color-4);
+  color: var(--color-2);
+}
+
+.form-wrapper h1 {
+  border-bottom: 1px solid var(--color-3);
+}
+.form-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.joint-field {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-2) 0;
+  gap: var(--space-1);
+}
+
+.btn-wrapper button,
+.btn-wrapper a {
+  background-color: var(--color-2);
+  color: var(--color-3);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: var(--space-1);
+}
+
+.btn-wrapper button:hover,
+.btn-wrapper button:focus-visible,
+.btn-wrapper a:hover,
+.btn-wrapper a:focus-visible {
+  background-color: var(--color-1);
+  color: var(--color-2);
+}
+#format {
+  height: 100%;
+}
+
+@media (max-width: 330px) {
+  .form-control {
+    width: 100%;
+  }
+}
