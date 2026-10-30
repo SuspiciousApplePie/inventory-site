@@ -354,6 +354,25 @@ main {
   font-size: var(--text-lg);
   color: var(--color-4);
 }
+
+.error-wrapper {
+  padding: var(--space-3);
+  color: var(--color-4);
+}
+.error-message {
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.error-message svg {
+  height: 3rem;
+  width: 3rem;
+  align-self: center;
+  fill: currentColor;
+}
+
 @media (max-width: 907px) {
   header {
     display: block;

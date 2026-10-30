@@ -151,8 +151,12 @@ async function getShowForm(req, res, next) {
   }
 }
 
-function getHomepage(req, res) {
-  res.render("index", { navBar, active: navBar[0].url });
+function getHomepage(req, res, next) {
+  try {
+    res.render("index", { navBar, active: navBar[0].url });
+  } catch {
+    next(new PageNotFound("Page not found."));
+  }
 }
 
 const getShows = [
@@ -376,6 +380,16 @@ const deleteShow = [
     }
   },
 ];
+// eslint-disable-next-line no-unused-vars
+function errorPage(err, req, res, next) {
+  const statusCode = err.statusCode ? err.statusCode : 500;
+  res.status(statusCode).render("404", {
+    statusCode: statusCode,
+    message: err.message || "Something went wrong.",
+    navBar,
+    active: null,
+  });
+}
 
 export {
   addShow,
@@ -386,4 +400,5 @@ export {
   getDeleteForm,
   deleteShow,
   getHomepage,
+  errorPage,
 };
