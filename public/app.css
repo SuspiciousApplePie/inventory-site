@@ -393,6 +393,7 @@ main {
 @media (max-width: 907px) {
   header {
     display: block;
+    position: static;
   }
 
   .search-form {
