@@ -55,6 +55,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
+  transition: background-color 200ms ease-in;
 }
 
 .hero a:hover,

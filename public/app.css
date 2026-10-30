@@ -121,6 +121,8 @@ header {
   background-color: var(--color-4);
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
 }
 
 /* Navbar */
@@ -136,7 +138,9 @@ nav li:hover,
 nav a.active {
   background-color: var(--color-1);
 }
-
+nav li {
+  transition: background-color 200ms ease;
+}
 nav a {
   display: block;
   color: var(--color-2);
@@ -170,6 +174,9 @@ nav a {
   border: none;
   outline: none;
   cursor: pointer;
+  transition:
+    background-color 200ms ease-in,
+    color 200ms ease-in;
 }
 
 .search-form button[type="submit"]:focus-visible,
@@ -240,6 +247,12 @@ main {
   background-color: transparent;
 }
 
+.show .buttons a {
+  transition:
+    background-color 200ms ease-in,
+    color 200ms ease-in;
+}
+
 .show .buttons a:hover,
 .show .buttons a:focus-visible {
   background-color: var(--color-1);
@@ -294,6 +307,9 @@ main {
   min-width: 30px;
   height: 30px;
   font-variant-numeric: tabular-nums;
+  transition:
+    background-color 200ms ease-in,
+    color 200ms ease-in;
 }
 
 .pagination a:hover,
@@ -327,6 +343,7 @@ main {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 200ms ease-in;
 }
 
 .add_show svg {
