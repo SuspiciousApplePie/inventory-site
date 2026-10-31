@@ -273,7 +273,7 @@ async function getUpdateForm(req, res, next) {
     const studios = await getStudioList();
 
     const show = transformShows(showRaw);
-
+    if (show.size === 0) throw new PageNotFound();
     res.render("update_show", {
       show: show.get(animeId),
       formats: formats,
