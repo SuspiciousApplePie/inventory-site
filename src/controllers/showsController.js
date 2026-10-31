@@ -380,6 +380,10 @@ const deleteShow = [
     }
   },
 ];
+
+function getErrorPage(req, res, next) {
+  next(new PageNotFound("Page not found."));
+}
 // eslint-disable-next-line no-unused-vars
 function errorPage(err, req, res, next) {
   const statusCode = err.statusCode ? err.statusCode : 500;
@@ -400,5 +404,6 @@ export {
   getDeleteForm,
   deleteShow,
   getHomepage,
+  getErrorPage,
   errorPage,
 };

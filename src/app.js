@@ -2,7 +2,7 @@ import express from "express";
 import process from "node:process";
 import showsApp from "./routes/showsRouter.js";
 import path from "node:path";
-import { errorPage } from "./controllers/showsController.js";
+import { getErrorPage, errorPage } from "./controllers/showsController.js";
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -14,7 +14,7 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", showsApp);
-
+app.use(getErrorPage);
 app.use(errorPage);
 
 app.listen(PORT, () => {
